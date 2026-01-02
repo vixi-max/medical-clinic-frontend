@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { DatePipe } from '@angular/common';
 //import { Consultation as ConsultationService } from '../../services/consultation';
 import { ConsultationService } from '../../services/consultation';
-import { RendezVous as RendezVousService } from '../../services/rendez-vous';
+import { RendezVousService as RendezVousService } from '../../services/rendez-vous';
 import { ConsultationResponse, ConsultationRequest, Consultation } from '../../models/consultation.model';
 
 @Component({

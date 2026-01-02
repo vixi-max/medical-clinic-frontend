@@ -45,7 +45,7 @@ export interface RendezVous {
   templateUrl: './prend-rdv.html',
   styleUrl: './prend-rdv.scss'
 })
-export class PrendreRDV implements OnInit {
+export class PrendreRDVComponent implements OnInit {
   currentDate: Date = new Date();
   searchTerm: string = '';
   showAddForm: boolean = false;

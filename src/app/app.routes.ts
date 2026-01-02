@@ -36,7 +36,7 @@ export const routes: Routes = [
   },
   {
     path: 'secritaire/prend-rdv',
-    loadComponent: () => import('./secritaire/prend-rdv/prend-rdv').then(m => m.PrendreRDV)
+    loadComponent: () => import('./secritaire/prend-rdv/prend-rdv').then(m => m.PrendreRDVComponent)
   },
   {
     path: 'secritaire/attent',
