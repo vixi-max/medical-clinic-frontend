@@ -1,121 +1,137 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CabinetService } from '../../services/cabinet';
-import { AuthService } from '../../services/auth';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+
+interface Cabinet {
+  id: number;
+  nom: string;
+  adresse: string;
+  ville: string;
+  telephone: string;
+  email: string;
+}
+
+interface AdminUser {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  cabinetId: number;
+  role: string;
+}
 
 @Component({
   selector: 'app-admin-header',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './admin-header.html',
-  styleUrl: './admin-header.scss',
+  styleUrls: ['./admin-header.scss']
 })
 export class AdminHeader implements OnInit {
-  adminName: string = 'Admin';
-  currentCabinet: any = null;
-  currentCabinetId: string | null = null; // Changé à string | null
-  cabinets: any[] = [];
+  adminName: string = 'Administrateur';
+  currentCabinet: Cabinet | null = null;
+  cabinets: Cabinet[] = [];
   showUserMenu: boolean = false;
-  notificationCount: number = 0;
+  notificationCount: number = 3;
   isSuperAdmin: boolean = false;
 
-  constructor(
-    private router: Router,
-    private cabinetService: CabinetService,
-    private authService: AuthService
-  ) {}
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.loadAdminProfile();
     this.loadCabinets();
-    this.checkSuperAdminStatus();
   }
 
   loadAdminProfile() {
-    // Récupérer les infos de l'admin connecté
-    const admin = this.authService.getCurrentUser();
-    if (admin) {
-      this.adminName = admin.nom + ' ' + admin.prenom;
-      // CORRECTION ICI : Convertir en string si défini, sinon null
-      this.currentCabinetId = admin.cabinetId ? admin.cabinetId.toString() : null;
-    }
+    // Simulation - normalement vous récupérez depuis un service d'authentification
+    const adminData: AdminUser = {
+      id: 1,
+      nom: 'Dupont',
+      prenom: 'Jean',
+      email: 'admin@cabinet.fr',
+      cabinetId: 1,
+      role: 'admin'
+    };
+    
+    this.adminName = `${adminData.prenom} ${adminData.nom}`;
+    this.loadCurrentCabinet(adminData.cabinetId);
   }
 
   loadCabinets() {
-    this.cabinetService.getAllCabinets().subscribe({
-      next: (cabinets) => {
-        this.cabinets = cabinets;
-        this.setCurrentCabinet();
+    // Simulation des cabinets
+    this.cabinets = [
+      {
+        id: 1,
+        nom: 'Cabinet Médical Central',
+        adresse: '123 Avenue des Champs-Élysées',
+        ville: 'Paris',
+        telephone: '01 23 45 67 89',
+        email: 'contact@cabinet-central.fr'
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des cabinets:', error);
+      {
+        id: 2,
+        nom: 'Polyclinique du Nord',
+        adresse: '456 Rue de la République',
+        ville: 'Lille',
+        telephone: '03 20 12 34 56',
+        email: 'info@polyclinique-nord.fr'
+      },
+      {
+        id: 3,
+        nom: 'Centre Médical Sud',
+        adresse: '789 Boulevard de la Liberté',
+        ville: 'Marseille',
+        telephone: '04 91 23 45 67',
+        email: 'accueil@centre-sud.fr'
+      },
+      {
+        id: 4,
+        nom: 'Clinique Saint-Louis',
+        adresse: '321 Rue du Faubourg Saint-Honoré',
+        ville: 'Lyon',
+        telephone: '04 78 12 34 56',
+        email: 'contact@clinique-stlouis.fr'
       }
-    });
+    ];
   }
 
-  setCurrentCabinet() {
-    if (this.currentCabinetId && this.cabinets.length > 0) {
-      // Utiliser == pour la comparaison car types différents (string vs number)
-      this.currentCabinet = this.cabinets.find(c => 
-        c.id == this.currentCabinetId // == au lieu de === pour comparer string et number
-      );
-    }
-  }
-
-  checkSuperAdminStatus() {
-    this.isSuperAdmin = this.authService.isSuperAdmin();
-  }
-
-  onCabinetChange(event: any) {
-    const cabinetId = event.target.value;
-    if (cabinetId) {
-      this.cabinetService.setCurrentCabinet(cabinetId).subscribe({
-        next: (cabinet) => {
-          this.currentCabinet = cabinet;
-          this.currentCabinetId = cabinetId;
-          // Recharger les données basées sur le cabinet sélectionné
-          this.reloadCabinetData();
-        },
-        error: (error) => {
-          console.error('Erreur lors du changement de cabinet:', error);
-        }
-      });
+  loadCurrentCabinet(cabinetId: number) {
+    const cabinet = this.cabinets.find(c => c.id === cabinetId);
+    if (cabinet) {
+      this.currentCabinet = cabinet;
     } else {
-      this.currentCabinet = null;
-      this.currentCabinetId = null; // Mettre à null au lieu de ''
-      // Recharger toutes les données
-      this.reloadAllData();
+      // Si le cabinet n'est pas trouvé, prendre le premier
+      this.currentCabinet = this.cabinets.length > 0 ? this.cabinets[0] : null;
     }
   }
 
-  reloadCabinetData() {
-    // Réinitialiser les données basées sur le cabinet
-    console.log('Rechargement des données pour le cabinet:', this.currentCabinetId);
-    // Émettre un événement pour informer les autres composants
-  }
-
-  reloadAllData() {
-    // Réinitialiser toutes les données
-    console.log('Rechargement de toutes les données');
-    // Émettre un événement pour informer les autres composants
+  // Méthode pour obtenir les initiales du nom
+  getInitials(fullName: string): string {
+    const names = fullName.split(' ');
+    if (names.length >= 2) {
+      return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+    }
+    return fullName.substring(0, 2).toUpperCase();
   }
 
   switchCabinet() {
-    // Ouvrir un modal pour changer de cabinet
-    this.showUserMenu = false;
-    // Implémenter la logique de changement de cabinet
+    if (this.cabinets.length > 1) {
+      // Ouvrir un modal pour changer de cabinet
+      const currentIndex = this.cabinets.findIndex(c => c.id === this.currentCabinet?.id);
+      const nextIndex = (currentIndex + 1) % this.cabinets.length;
+      this.currentCabinet = this.cabinets[nextIndex];
+      
+      // Ici, vous pourriez sauvegarder le choix dans le localStorage
+      localStorage.setItem('selectedCabinetId', this.currentCabinet.id.toString());
+      
+      // Recharger la page ou émettre un événement
+      alert(`Cabinet changé pour: ${this.currentCabinet.nom}`);
+    }
   }
 
   openNotifications() {
-    this.showUserMenu = false;
     this.router.navigate(['/admin/notifications']);
-  }
-
-  goToSuperAdmin() {
-    this.showUserMenu = false;
-    this.router.navigate(['/super-admin']);
   }
 
   toggleUserMenu() {
@@ -123,7 +139,9 @@ export class AdminHeader implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
+    // Simuler la déconnexion
+    localStorage.removeItem('token');
+    localStorage.removeItem('selectedCabinetId');
     this.router.navigate(['/login']);
   }
 }

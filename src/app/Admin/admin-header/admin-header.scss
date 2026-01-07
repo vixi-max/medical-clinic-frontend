@@ -1,125 +1,96 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 .medical-header {
-  background: linear-gradient(135deg, 
-    rgba(28, 6, 52, 0.95) 0%, 
-    rgba(43, 77, 135, 0.95) 100%);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 20px rgba(124, 58, 237, 0.3),
-    0 8px 32px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(28, 6, 52, 0.95) 0%, rgba(43, 77, 135, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
   z-index: 1000;
-  font-family: 'Inter', sans-serif;
+  padding: 0 2rem;
 
   .header-container {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    align-items: center;
     height: 70px;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
   }
 
-  // Logo Section - Design moderne
+  // Logo Section
   .logo-section {
+    display: flex;
+    align-items: center;
+    
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 1.3rem;
-      font-weight: 700;
+      gap: 0.75rem;
       
       i {
         font-size: 1.8rem;
-        background: linear-gradient(135deg, #ffffff, #a78bfa);
+        color: #a78bfa;
+        background: rgba(167, 139, 250, 0.2);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+      }
+      
+      .clinic-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #fff, #a78bfa);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-      }
-
-      .clinic-name {
-        color: white;
-        font-weight: 600;
-        letter-spacing: -0.5px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
     }
   }
 
-  // Navigation - Design épuré
+  // Navigation
   .navigation {
     .nav-menu {
       display: flex;
       list-style: none;
+      gap: 0.5rem;
       margin: 0;
       padding: 0;
-      gap: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 6px;
-      border-radius: 16px;
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
+      
       .nav-item {
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 8px;
-          color: rgba(255, 255, 255, 0.9);
+          gap: 0.5rem;
+          padding: 0.75rem 1.25rem;
+          color: rgba(255, 255, 255, 0.8);
           text-decoration: none;
-          padding: 10px 16px;
-          border-radius: 12px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: 10px;
+          transition: all 0.3s ease;
           font-weight: 500;
-          position: relative;
-          font-size: 0.9rem;
-          border: 1px solid transparent;
-
+          
           i {
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            opacity: 0.9;
+            font-size: 1.1rem;
           }
-
+          
+          span {
+            font-size: 0.9rem;
+          }
+          
           &:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
-            
-            i {
-              transform: scale(1.1);
-              opacity: 1;
-            }
+            transform: translateY(-2px);
           }
-
+          
           &.active {
-            color: white;
-            background: rgba(124, 58, 237, 0.3);
-            border: 1px solid rgba(167, 139, 250, 0.4);
-            box-shadow: 
-              0 4px 12px rgba(124, 58, 237, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            
-            &::before {
-              content: '';
-              position: absolute;
-              top: -2px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 24px;
-              height: 2px;
-              background: #a78bfa;
-              border-radius: 2px;
-              box-shadow: 0 0 8px rgba(167, 139, 250, 0.6);
-            }
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+            border-left: 3px solid #a78bfa;
             
             i {
               color: #a78bfa;
@@ -130,231 +101,210 @@
     }
   }
 
-  // User Section - Design minimaliste
+  // User Section
   .user-section {
     .user-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 1.5rem;
       position: relative;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 6px;
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-1px);
-      }
-
-      .cabinet-selector {
-        .cabinet-select {
-          background: rgba(255, 255, 255, 0.15);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 12px;
-          padding: 8px 30px 8px 12px;
-          color: white;
-          font-size: 0.8rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 10px center;
-          background-size: 1em;
-          min-width: 120px;
-          font-weight: 500;
-
-          &:focus {
-            outline: none;
-            border-color: #a78bfa;
-            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+      
+      // Cabinet Info
+      .cabinet-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+        
+        .cabinet-display {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          
+          i {
+            color: #a78bfa;
+            font-size: 0.9rem;
           }
-
-          option {
-            background: rgba(28, 6, 52, 0.95);
+          
+          .cabinet-name {
+            font-size: 0.85rem;
+            font-weight: 600;
             color: white;
           }
-
-          &:hover {
-            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .cabinet-ville {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.6);
+          
+          i {
+            font-size: 0.7rem;
           }
         }
       }
-
+      
+      // User Avatar
       .user-avatar {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        width: 40px;
+        height: 40px;
+        background: rgba(167, 139, 250, 0.2);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 1rem;
-        border: 2px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-
-        &:hover {
-          transform: scale(1.05);
-          box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+        color: #a78bfa;
+        border: 2px solid rgba(167, 139, 250, 0.3);
+        
+        i {
+          font-size: 1.2rem;
         }
       }
-
+      
+      // User Menu
       .user-menu {
         position: relative;
-
+        
         .user-menu-btn {
-          background: none;
-          border: none;
-          color: rgba(255, 255, 255, 0.9);
-          cursor: pointer;
-          padding: 6px;
-          border-radius: 6px;
-          transition: all 0.3s ease;
-          width: 28px;
-          height: 28px;
           display: flex;
           align-items: center;
-          justify-content: center;
-
+          gap: 0.5rem;
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          
+          .user-name-short {
+            width: 32px;
+            height: 32px;
+            background: rgba(167, 139, 250, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+          }
+          
+          i {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+          }
+          
           &:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(180deg);
+            background: rgba(255, 255, 255, 0.1);
+            
+            i {
+              transform: rotate(180deg);
+            }
           }
         }
-
+        
         .user-dropdown {
           position: absolute;
           top: 100%;
           right: 0;
-          background: rgba(255, 255, 255, 0.98);
+          width: 320px;
+          background: rgba(28, 6, 52, 0.95);
           backdrop-filter: blur(20px);
-          border-radius: 16px;
-          padding: 8px;
-          margin-top: 8px;
-          min-width: 240px;
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.15),
-            0 4px 20px rgba(124, 58, 237, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          z-index: 1001;
-          animation: slideDown 0.2s ease-out;
-          overflow: hidden;
-
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+          margin-top: 0.5rem;
+          padding: 1rem;
+          z-index: 1000;
+          animation: slideDown 0.3s ease;
+          
           .dropdown-user-info {
-            padding: 12px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.05));
-            border-radius: 12px;
-            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 12px;
-
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            
             .dropdown-user-avatar {
-              width: 40px;
-              height: 40px;
-              background: linear-gradient(135deg, #7c3aed, #a78bfa);
+              width: 50px;
+              height: 50px;
+              background: linear-gradient(135deg, #a78bfa, #7c3aed);
               border-radius: 50%;
               display: flex;
               align-items: center;
               justify-content: center;
               color: white;
-              font-size: 1.1rem;
-              flex-shrink: 0;
-              border: 2px solid rgba(124, 58, 237, 0.3);
+              font-weight: 700;
+              font-size: 1.2rem;
             }
-
+            
             .dropdown-user-details {
               flex: 1;
-              min-width: 0;
-
+              
               .dropdown-user-name {
                 display: block;
                 font-weight: 600;
-                font-size: 0.9rem;
-                color: #1f2937;
-                margin-bottom: 2px;
+                color: white;
+                margin-bottom: 0.25rem;
               }
-
+              
               .dropdown-user-role {
                 display: block;
-                font-size: 0.75rem;
-                color: #7c3aed;
-                font-weight: 600;
-                background: rgba(124, 58, 237, 0.1);
-                padding: 2px 8px;
-                border-radius: 10px;
-                width: fit-content;
-                margin-bottom: 4px;
+                font-size: 0.85rem;
+                color: #a78bfa;
+                margin-bottom: 0.25rem;
               }
-
-              .dropdown-cabinet-info {
-                display: block;
-                font-size: 0.75rem;
-                color: #6b7280;
+              
+              .dropdown-cabinet-info,
+              .dropdown-cabinet-ville {
                 display: flex;
                 align-items: center;
-                gap: 4px;
-
+                gap: 0.25rem;
+                font-size: 0.8rem;
+                color: rgba(255, 255, 255, 0.6);
+                
                 i {
-                  color: #a78bfa;
                   font-size: 0.7rem;
                 }
               }
             }
           }
-
+          
+          .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.75rem 0;
+          }
+          
           .dropdown-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: #374151;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 0.85rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
             position: relative;
-
+            
             i {
-              color: #6B7280;
-              width: 16px;
-              font-size: 0.9rem;
-              transition: all 0.2s ease;
+              width: 20px;
+              text-align: center;
+              color: #a78bfa;
             }
-
-            &:hover {
-              background: rgba(124, 58, 237, 0.1);
-              color: #7c3aed;
-              transform: translateX(4px);
-
-              i {
-                color: #7c3aed;
-                transform: scale(1.1);
-              }
-            }
-
-            &.logout {
-              color: #dc2626;
-
-              i {
-                color: #dc2626;
-              }
-
-              &:hover {
-                background: rgba(220, 38, 38, 0.1);
-                color: #b91c1c;
-              }
-            }
-
+            
             .notification-badge {
-              background: linear-gradient(135deg, #ef4444, #dc2626);
+              position: absolute;
+              right: 1rem;
+              top: 50%;
+              transform: translateY(-50%);
+              background: #ef4444;
               color: white;
               border-radius: 10px;
               min-width: 20px;
@@ -364,126 +314,111 @@
               justify-content: center;
               font-size: 0.7rem;
               font-weight: 600;
-              position: absolute;
-              right: 12px;
-              padding: 0 6px;
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+              padding: 0 0.25rem;
+            }
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.1);
+              color: white;
+              transform: translateX(5px);
+            }
+            
+            &.logout {
+              color: #ef4444;
+              
+              i {
+                color: #ef4444;
+              }
+              
+              &:hover {
+                background: rgba(239, 68, 68, 0.1);
+              }
             }
           }
-
-          .dropdown-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
-            margin: 6px 0;
-          }
         }
       }
     }
   }
+}
 
-  // Animations
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
+// Animations
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .medical-header {
+    padding: 0 1rem;
+    
+    .header-container {
+      height: 60px;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    
+    .logo-section .logo .clinic-name {
+      font-size: 1rem;
+    }
+    
+    .navigation .nav-menu .nav-item .nav-link span {
+      display: none;
+    }
+    
+    .user-section .user-info .cabinet-info {
+      .cabinet-display .cabinet-name {
+        display: none;
+      }
+      
+      .cabinet-ville {
+        display: none;
+      }
     }
   }
+}
 
-  // Responsive Design amélioré
-  @media (max-width: 1200px) {
+@media (max-width: 768px) {
+  .medical-header {
     .navigation .nav-menu {
-      gap: 2px;
-      padding: 4px;
+      gap: 0.25rem;
       
       .nav-item .nav-link {
-        padding: 8px 12px;
-        font-size: 0.85rem;
+        padding: 0.5rem;
         
-        span {
-          font-size: 0.8rem;
+        i {
+          font-size: 1rem;
         }
       }
     }
-
-    .cabinet-selector .cabinet-select {
-      min-width: 100px;
-      font-size: 0.75rem;
+    
+    .user-section .user-info {
+      gap: 0.75rem;
+      
+      .cabinet-info {
+        display: none;
+      }
     }
   }
+}
 
-  @media (max-width: 1024px) {
+@media (max-width: 480px) {
+  .medical-header {
+    .logo-section .logo .clinic-name {
+      display: none;
+    }
+    
     .navigation .nav-menu {
       display: none;
     }
-
-    .cabinet-selector {
-      display: none !important;
-    }
-
-    .user-info {
-      padding: 6px !important;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .header-container {
-      padding: 0 1rem;
-    }
-
-    .logo-section .logo {
-      font-size: 1.1rem;
-      gap: 8px;
-      
-      i {
-        font-size: 1.4rem;
-      }
-
-      .clinic-name {
-        font-size: 1rem;
-      }
-    }
-
-    .user-section .user-info {
-      gap: 8px;
-    }
-
+    
     .user-dropdown {
-      min-width: 220px !important;
-      right: -10px !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .header-container {
-      padding: 0 0.75rem;
-    }
-
-    .logo-section .logo {
-      font-size: 1rem;
-      gap: 6px;
-      
-      i {
-        font-size: 1.2rem;
-      }
-
-      .clinic-name {
-        font-size: 0.9rem;
-      }
-    }
-
-    .user-avatar {
-      width: 32px !important;
-      height: 32px !important;
-      font-size: 0.9rem !important;
-    }
-
-    .user-menu-btn {
-      width: 26px !important;
-      height: 26px !important;
+      width: 280px !important;
+      right: -50px !important;
     }
   }
 }

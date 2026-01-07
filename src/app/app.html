@@ -14,6 +14,11 @@
      <app-admin-header></app-admin-header>
   }
   
+   @else if (isAdminSupRoute()) {
+    <!-- Si vous avez un header spécifique pour secrétaire, sinon utiliser le header principal -->
+    <app-admin-sup-header></app-admin-sup-header>
+  }
+  
   <!-- Header principal - affiché seulement sur les routes publiques -->
   @else {
     <app-header></app-header>

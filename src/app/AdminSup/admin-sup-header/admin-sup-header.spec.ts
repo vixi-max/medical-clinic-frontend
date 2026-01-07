@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminCabinet } from './admin-cabinet';
+import { AdminSupHeader } from './admin-sup-header';
 
-describe('AdminCabinet', () => {
-  let component: AdminCabinet;
-  let fixture: ComponentFixture<AdminCabinet>;
+describe('AdminSupHeader', () => {
+  let component: AdminSupHeader;
+  let fixture: ComponentFixture<AdminSupHeader>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminCabinet]
+      imports: [AdminSupHeader]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminCabinet);
+    fixture = TestBed.createComponent(AdminSupHeader);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

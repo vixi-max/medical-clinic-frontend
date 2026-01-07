@@ -38,9 +38,14 @@ export interface Cabinet {
   styleUrls: ['./admin-medecins.scss']
 })
 export class AdminMedecins implements OnInit {
+  // Propriétés pour gérer l'admin connecté
+  adminCabinetId: number = 0;
+  adminCabinetNom: string = 'Cabinet Médical Central'; // Valeur par défaut
+  
   // Propriété pour le tri
-sortBy: string = 'nom';
-sortDirection: 'asc' | 'desc' = 'asc';
+  sortBy: string = 'nom';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  
   // Données de démonstration
   cabinets: Cabinet[] = [
     {
@@ -205,12 +210,40 @@ sortDirection: 'asc' | 'desc' = 'asc';
       avatar: 'FB',
       cabinetId: 1,
       cabinetNom: 'Cabinet Médical Central'
+    },
+    {
+      idMedecin: 9,
+      nom: 'Robert',
+      prenom: 'Claire',
+      specialite: 'Radiologie',
+      email: 'c.robert@cabinet-central.fr',
+      telephone: '01 23 45 67 93',
+      matricule: 'MED123464',
+      dateEmbauche: new Date('2020-05-10'),
+      statut: 'actif',
+      avatar: 'CR',
+      cabinetId: 1,
+      cabinetNom: 'Cabinet Médical Central'
+    },
+    {
+      idMedecin: 10,
+      nom: 'Petit',
+      prenom: 'Luc',
+      specialite: 'Psychiatrie',
+      email: 'l.petit@cabinet-central.fr',
+      telephone: '01 23 45 67 94',
+      matricule: 'MED123465',
+      dateEmbauche: new Date('2019-02-28'),
+      statut: 'congé',
+      avatar: 'LP',
+      cabinetId: 1,
+      cabinetNom: 'Cabinet Médical Central'
     }
   ];
 
   // Filtres et recherche
   searchQuery: string = '';
-  selectedCabinet: number = 0; // 0 = Tous les cabinets
+  selectedCabinet: number = 0;
   selectedSpecialite: string = 'tous';
   selectedStatut: string = 'tous';
   
@@ -226,7 +259,7 @@ sortDirection: 'asc' | 'desc' = 'asc';
     matricule: '',
     dateEmbauche: new Date(),
     statut: 'actif',
-    cabinetId: 1,
+    cabinetId: 0,
     cabinetNom: ''
   };
 
@@ -254,21 +287,44 @@ sortDirection: 'asc' | 'desc' = 'asc';
   currentDate: string = '';
 
   ngOnInit() {
+    // Récupérer l'admin connecté et son cabinet
+    this.getAdminCabinetInfo();
     this.calculerStatistiques();
     this.updateCurrentDate();
   }
 
-  // Méthode pour calculer les statistiques
-  calculerStatistiques() {
-    this.totalMedecins = this.medecins.length;
-    this.medecinsActifs = this.medecins.filter(m => m.statut === 'actif').length;
-    this.medecinsEnConge = this.medecins.filter(m => m.statut === 'congé').length;
-    this.medecinsInactifs = this.medecins.filter(m => m.statut === 'inactif').length;
+  // Méthode pour obtenir les infos du cabinet de l'admin
+  getAdminCabinetInfo() {
+    // Simulation - normalement vous récupérez ces infos depuis un service d'authentification
+    // Pour la démo, supposons que l'admin est connecté au cabinet 1 (Cabinet Médical Central)
+    
+    // Vous pouvez changer cette valeur pour simuler un autre cabinet admin
+    const currentUserCabinetId = 1; // ID du cabinet de l'admin connecté
+    
+    this.adminCabinetId = currentUserCabinetId;
+    
+    // Trouver le nom du cabinet
+    const cabinet = this.cabinets.find(c => c.id === this.adminCabinetId);
+    if (cabinet) {
+      this.adminCabinetNom = cabinet.nom;
+    }
+    
+    // Filtrer automatiquement par le cabinet de l'admin
+    this.selectedCabinet = this.adminCabinetId;
+    
+    // Initialiser le formulaire avec le cabinet de l'admin
+    this.newMedecin.cabinetId = this.adminCabinetId;
   }
 
-  // Méthode pour filtrer les médecins
+  // Méthode pour obtenir les médecins filtrés (uniquement ceux du cabinet de l'admin)
   get filteredMedecins(): Medecin[] {
-    return this.medecins.filter(medecin => {
+    // Filtre d'abord par le cabinet de l'admin
+    let filtered = this.medecins.filter(medecin => 
+      medecin.cabinetId === this.adminCabinetId
+    );
+
+    // Applique les autres filtres
+    filtered = filtered.filter(medecin => {
       // Filtre par recherche
       const matchesSearch = !this.searchQuery || 
         medecin.nom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -276,32 +332,83 @@ sortDirection: 'asc' | 'desc' = 'asc';
         medecin.specialite.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         medecin.matricule.toLowerCase().includes(this.searchQuery.toLowerCase());
 
-      // Filtre par cabinet
-      const matchesCabinet = this.selectedCabinet === 0 || medecin.cabinetId === this.selectedCabinet;
-
       // Filtre par spécialité
       const matchesSpecialite = this.selectedSpecialite === 'tous' || medecin.specialite === this.selectedSpecialite;
 
       // Filtre par statut
       const matchesStatut = this.selectedStatut === 'tous' || medecin.statut === this.selectedStatut;
 
-      return matchesSearch && matchesCabinet && matchesSpecialite && matchesStatut;
+      return matchesSearch && matchesSpecialite && matchesStatut;
+    });
+
+    // Appliquer le tri
+    return this.sortMedecins(filtered);
+  }
+
+  // Méthode pour trier les médecins
+  sortMedecins(medecins: Medecin[]): Medecin[] {
+    return [...medecins].sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (this.sortBy) {
+        case 'nom':
+          valueA = a.nom.toLowerCase();
+          valueB = b.nom.toLowerCase();
+          break;
+        case 'dateEmbauche':
+          valueA = new Date(a.dateEmbauche);
+          valueB = new Date(b.dateEmbauche);
+          break;
+        case 'specialite':
+          valueA = a.specialite.toLowerCase();
+          valueB = b.specialite.toLowerCase();
+          break;
+        default:
+          valueA = a.nom.toLowerCase();
+          valueB = b.nom.toLowerCase();
+      }
+
+      if (this.sortDirection === 'asc') {
+        return valueA > valueB ? 1 : -1;
+      } else {
+        return valueA < valueB ? 1 : -1;
+      }
     });
   }
 
-  // Méthode pour obtenir les médecins d'un cabinet spécifique
-  getMedecinsByCabinet(cabinetId: number): Medecin[] {
-    return this.medecins.filter(m => m.cabinetId === cabinetId);
+  // Méthode pour basculer le tri
+  toggleSort(field: string) {
+    if (this.sortBy === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortDirection = 'asc';
+    }
   }
 
-  // Méthode pour obtenir le nombre de médecins par spécialité
+  // Méthode pour calculer les statistiques (uniquement pour le cabinet de l'admin)
+  calculerStatistiques() {
+    const medecinsCabinet = this.medecins.filter(m => m.cabinetId === this.adminCabinetId);
+    this.totalMedecins = medecinsCabinet.length;
+    this.medecinsActifs = medecinsCabinet.filter(m => m.statut === 'actif').length;
+    this.medecinsEnConge = medecinsCabinet.filter(m => m.statut === 'congé').length;
+    this.medecinsInactifs = medecinsCabinet.filter(m => m.statut === 'inactif').length;
+  }
+
+  // Méthode pour obtenir le nombre de médecins par spécialité (uniquement pour le cabinet de l'admin)
   getMedecinsCountBySpecialite(specialite: string): number {
-    return this.medecins.filter(m => m.specialite === specialite).length;
+    return this.medecins.filter(m => 
+      m.specialite === specialite && m.cabinetId === this.adminCabinetId
+    ).length;
   }
 
-  // Méthode pour ajouter un nouveau médecin
+  // Méthode pour ajouter un nouveau médecin (uniquement dans le cabinet de l'admin)
   ajouterMedecin() {
     if (this.validerFormulaire()) {
+      // Forcer l'ajout dans le cabinet de l'admin
+      this.newMedecin.cabinetId = this.adminCabinetId;
+      
       // Générer un ID unique
       const maxId = Math.max(...this.medecins.map(m => m.idMedecin));
       this.newMedecin.idMedecin = maxId + 1;
@@ -324,6 +431,9 @@ sortDirection: 'asc' | 'desc' = 'asc';
       
       // Recalculer les statistiques
       this.calculerStatistiques();
+      
+      // Afficher une notification
+      alert(`Médecin ${this.newMedecin.prenom} ${this.newMedecin.nom} ajouté avec succès !`);
     }
   }
 
@@ -349,7 +459,7 @@ sortDirection: 'asc' | 'desc' = 'asc';
       matricule: '',
       dateEmbauche: new Date(),
       statut: 'actif',
-      cabinetId: 1,
+      cabinetId: this.adminCabinetId,
       cabinetNom: ''
     };
   }
@@ -365,7 +475,8 @@ sortDirection: 'asc' | 'desc' = 'asc';
 
   // Méthode pour mettre à jour la date courante
   updateCurrentDate() {
-    this.currentDate = this.formatDate(new Date());
+    const now = new Date();
+    this.currentDate = this.formatDate(now);
   }
 
   // Méthode pour obtenir la couleur du statut
@@ -388,6 +499,73 @@ sortDirection: 'asc' | 'desc' = 'asc';
     return `rgba(${r}, ${g}, ${b}, 0.2)`;
   }
 
+  // Méthode pour changer le statut d'un médecin
+  toggleStatut(medecin: Medecin) {
+    const statuts: ('actif' | 'inactif' | 'congé')[] = ['actif', 'inactif', 'congé'];
+    const currentIndex = statuts.indexOf(medecin.statut);
+    medecin.statut = statuts[(currentIndex + 1) % statuts.length];
+    this.calculerStatistiques();
+    
+    // Afficher une notification
+    alert(`Statut de Dr. ${medecin.prenom} ${medecin.nom} changé à : ${medecin.statut}`);
+  }
+
+  // Méthode pour supprimer un médecin
+  supprimerMedecin(id: number) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce médecin ? Cette action est irréversible.')) {
+      this.medecins = this.medecins.filter(m => m.idMedecin !== id);
+      this.calculerStatistiques();
+      alert('Médecin supprimé avec succès !');
+    }
+  }
+
+  // Méthode pour réinitialiser les filtres
+  resetFilters() {
+    this.searchQuery = '';
+    this.selectedSpecialite = 'tous';
+    this.selectedStatut = 'tous';
+    // Ne réinitialisez PAS le cabinet - gardez celui de l'admin
+    this.selectedCabinet = this.adminCabinetId;
+  }
+
+  // Méthode pour exporter
+  exportToExcel() {
+    const medecinsToExport = this.filteredMedecins;
+    if (medecinsToExport.length === 0) {
+      alert('Aucun médecin à exporter !');
+      return;
+    }
+    
+    // Formatage des données pour l'export
+    const csvData = medecinsToExport.map(medecin => ({
+      'Nom': medecin.nom,
+      'Prénom': medecin.prenom,
+      'Spécialité': medecin.specialite,
+      'Email': medecin.email,
+      'Téléphone': medecin.telephone,
+      'Matricule': medecin.matricule,
+      'Date Embauche': this.formatDate(medecin.dateEmbauche),
+      'Statut': medecin.statut,
+      'Cabinet': medecin.cabinetNom
+    }));
+    
+    // Simuler l'export (dans une vraie application, vous généreriez un fichier Excel)
+    console.log('Données à exporter :', csvData);
+    alert(`Export réussi ! ${medecinsToExport.length} médecins exportés.`);
+  }
+
+  // Méthode pour imprimer
+  printList() {
+    window.print();
+  }
+
+  // Méthode pour modifier un médecin
+  editMedecin(medecin: Medecin) {
+    // Pour l'instant, on affiche juste une alerte
+    // Dans une vraie application, vous ouvririez un formulaire de modification
+    alert(`Modification du médecin: ${medecin.nom} ${medecin.prenom}\n\nCette fonctionnalité sera implémentée dans la prochaine version.`);
+  }
+
   // Méthode pour obtenir la couleur du statut du cabinet
   getCabinetStatutColor(statut: string): string {
     switch(statut) {
@@ -397,54 +575,4 @@ sortDirection: 'asc' | 'desc' = 'asc';
       default: return '#94A3B8';
     }
   }
-
-  // Méthode pour changer le statut d'un médecin
-  toggleStatut(medecin: Medecin) {
-    const statuts: ('actif' | 'inactif' | 'congé')[] = ['actif', 'inactif', 'congé'];
-    const currentIndex = statuts.indexOf(medecin.statut);
-    medecin.statut = statuts[(currentIndex + 1) % statuts.length];
-    this.calculerStatistiques();
-  }
-
-  // Méthode pour supprimer un médecin
-  supprimerMedecin(id: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce médecin ?')) {
-      this.medecins = this.medecins.filter(m => m.idMedecin !== id);
-      this.calculerStatistiques();
-    }
-  }
-
-  // Méthode pour réinitialiser les filtres
-  resetFilters() {
-    this.searchQuery = '';
-    this.selectedCabinet = 0;
-    this.selectedSpecialite = 'tous';
-    this.selectedStatut = 'tous';
-  }
-  // Méthode pour trier
-toggleSort(field: string) {
-  if (this.sortBy === field) {
-    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
-    this.sortBy = field;
-    this.sortDirection = 'asc';
-  }
-}
-
-// Méthode pour exporter
-exportToExcel() {
-  alert('Fonction d\'export Excel à implémenter');
-  // Implémentez l'export Excel ici
-}
-
-// Méthode pour imprimer
-printList() {
-  window.print();
-}
-
-// Méthode pour modifier un médecin
-editMedecin(medecin: Medecin) {
-  // Implémentez la modification ici
-  alert(`Modification du médecin: ${medecin.nom} ${medecin.prenom}`);
-}
 }

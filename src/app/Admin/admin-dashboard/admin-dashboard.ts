@@ -26,16 +26,6 @@ interface RecentActivity {
   status: string;
 }
 
-interface CabinetSummary {
-  id: number;
-  name: string;
-  medecins: number;
-  secretaires: number;
-  patients: number;
-  status: 'active' | 'inactive' | 'pending';
-  revenue: number;
-}
-
 interface CabinetFormData {
   nomCabinet: string;
   adresseCabinet: string;
@@ -62,8 +52,11 @@ export class AdminDashboard implements OnInit, OnDestroy {
   isSubmitting: boolean = false;
   errorMessage: string = '';
   
+  // Cabinet unique
+  cabinet: Cabinet | null = null;
+  
   // Formulaire de cabinet
-  newCabinet: CabinetFormData = {
+  editCabinetData: CabinetFormData = {
     nomCabinet: '',
     adresseCabinet: '',
     emailCabinet: '',
@@ -73,9 +66,6 @@ export class AdminDashboard implements OnInit, OnDestroy {
   
   // Statistiques
   stats: StatCard[] = [];
-  
-  // Cabinets récents
-  recentCabinets: CabinetSummary[] = [];
   
   // Activités récentes
   recentActivities: RecentActivity[] = [];
@@ -104,14 +94,10 @@ export class AdminDashboard implements OnInit, OnDestroy {
 
   // Méthode utilitaire pour convertir hex en RGB
   hexToRgb(hex: string): string {
-    // Supprimer le # s'il existe
     hex = hex.replace(/^#/, '');
-    
-    // Convertir les valeurs hex en décimal
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    
     return `${r}, ${g}, ${b}`;
   }
 
@@ -126,7 +112,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
     this.updateDateTime();
     this.timeInterval = setInterval(() => {
       this.updateDateTime();
-    }, 60000); // Mettre à jour chaque minute
+    }, 60000);
   }
 
   updateDateTime() {
@@ -143,123 +129,127 @@ export class AdminDashboard implements OnInit, OnDestroy {
     });
   }
 
-  loadDashboardData() {
+  async loadDashboardData() {
+    await this.loadCabinet();
     this.loadStats();
-    this.loadRecentCabinets();
     this.loadRecentActivities();
   }
 
+  async loadCabinet() {
+    try {
+      // Utiliser getAllCabinets() pour récupérer tous les cabinets
+      const cabinets = await this.cabinetService.getAllCabinets().toPromise();
+      if (cabinets && cabinets.length > 0) {
+        // Prendre le premier cabinet
+        this.cabinet = cabinets[0];
+        this.editCabinetData = {
+          nomCabinet: this.cabinet.nomCabinet,
+          adresseCabinet: this.cabinet.adresseCabinet,
+          emailCabinet: this.cabinet.emailCabinet,
+          teleCabinet: this.cabinet.teleCabinet,
+          logo: this.cabinet.logo || ''
+        };
+      } else {
+        // Si aucun cabinet, charger des données mockées
+        this.loadMockCabinet();
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement du cabinet:', error);
+      this.loadMockCabinet();
+    }
+  }
+
+  loadMockCabinet() {
+    // Données mockées pour le développement
+    this.cabinet = {
+      id: 1,
+      logo: 'https://via.placeholder.com/150',
+      nomCabinet: 'Clinique Santé Plus',
+      adresseCabinet: '123 Rue de la Santé, Paris 75001',
+      emailCabinet: 'contact@cliniquesanteparis.fr',
+      teleCabinet: '01 23 45 67 89',
+      superAdminId: 1,
+      createdAt: '2024-01-15T10:30:00Z',
+      updatedAt: '2024-01-15T10:30:00Z',
+      statut: 'ACTIF'
+    };
+    
+    this.editCabinetData = {
+      nomCabinet: this.cabinet.nomCabinet,
+      adresseCabinet: this.cabinet.adresseCabinet,
+      emailCabinet: this.cabinet.emailCabinet,
+      teleCabinet: this.cabinet.teleCabinet,
+      logo: this.cabinet.logo
+    };
+  }
+
   loadStats() {
-    // Données mockées
     this.stats = [
       {
-        title: 'Total Cabinets',
-        value: 12,
-        icon: 'fas fa-clinic-medical',
-        color: '#0ea5e9',
-        trend: 15,
-        trendLabel: 'ce mois',
-        description: 'Cabinets actifs'
-      },
-      {
         title: 'Médecins',
-        value: 48,
+        value: 6,
         icon: 'fas fa-user-md',
-        color: '#10B981',
-        trend: 8,
-        trendLabel: 'nouveaux',
+        color: '#0ea5e9',
+        trend: 2,
+        trendLabel: 'ce mois',
         description: 'Médecins actifs'
       },
       {
         title: 'Secrétaires',
-        value: 24,
+        value: 3,
         icon: 'fas fa-user-nurse',
-        color: '#8B5CF6',
-        trend: 12,
-        trendLabel: 'ce trimestre',
+        color: '#10B981',
+        trend: 1,
+        trendLabel: 'nouveaux',
         description: 'Secrétaires actives'
       },
       {
-        title: 'Revenus',
-        value: 152400,
-        icon: 'fas fa-euro-sign',
-        color: '#F59E0B',
-        trend: 23,
-        trendLabel: 'vs mois dernier',
-        description: 'Total revenus mensuels'
+        title: 'Patients',
+        value: 850,
+        icon: 'fas fa-user-injured',
+        color: '#8B5CF6',
+        trend: 12,
+        trendLabel: 'ce mois',
+        description: 'Patients total'
       },
       {
-        title: 'Patients',
-        value: 1560,
-        icon: 'fas fa-user-injured',
-        color: '#EC4899',
-        trend: 18,
-        trendLabel: 'nouveaux',
-        description: 'Patients total'
+        title: 'Revenus',
+        value: 45000,
+        icon: 'fas fa-euro-sign',
+        color: '#F59E0B',
+        trend: 15,
+        trendLabel: 'vs mois dernier',
+        description: 'Revenus mensuels'
       },
       {
         title: 'Rendez-vous',
         value: 328,
         icon: 'fas fa-calendar-check',
+        color: '#EC4899',
+        trend: 8,
+        trendLabel: 'ce mois',
+        description: 'Rendez-vous programmés'
+      },
+      {
+        title: 'Taux de remplissage',
+        value: 85,
+        icon: 'fas fa-chart-pie',
         color: '#06B6D4',
-        trend: -5,
+        trend: 5,
         trendLabel: 'vs semaine dernière',
-        description: 'Ce mois'
-      }
-    ];
-  }
-
-  loadRecentCabinets() {
-    // Données mockées
-    this.recentCabinets = [
-      {
-        id: 1,
-        name: 'Clinique Santé Plus',
-        medecins: 5,
-        secretaires: 2,
-        patients: 320,
-        status: 'active',
-        revenue: 45000
-      },
-      {
-        id: 2,
-        name: 'Centre Médical du Nord',
-        medecins: 3,
-        secretaires: 1,
-        patients: 180,
-        status: 'active',
-        revenue: 28000
-      },
-      {
-        id: 3,
-        name: 'Polyclinique Sud',
-        medecins: 4,
-        secretaires: 2,
-        patients: 240,
-        status: 'active',
-        revenue: 36000
-      },
-      {
-        id: 4,
-        name: 'Cabinet Dentaire Est',
-        medecins: 2,
-        secretaires: 1,
-        patients: 120,
-        status: 'active',
-        revenue: 22000
+        description: 'Occupation du cabinet'
       }
     ];
   }
 
   loadRecentActivities() {
-    // Données mockées
     this.recentActivities = [
       {
         id: 1,
-        type: 'cabinet',
-        title: 'Nouveau cabinet créé',
-        description: 'Clinique Santé Plus a été créé',
-        time: 'Il y a 2 heures',
+        type: 'appointment',
+        title: 'Nouveau rendez-vous',
+        description: 'Consultation avec M. Dupont',
+        time: 'Il y a 30 minutes',
         user: 'Dr. Martin',
         status: 'completed'
       },
@@ -267,34 +257,33 @@ export class AdminDashboard implements OnInit, OnDestroy {
         id: 2,
         type: 'user',
         title: 'Nouveau médecin ajouté',
-        description: 'Dr. Sophie Lambert ajoutée au cabinet Nord',
-        time: 'Il y a 4 heures',
-        user: 'Admin Cabinet',
+        description: 'Dr. Sophie Lambert a rejoint le cabinet',
+        time: 'Il y a 2 heures',
+        user: 'Administrateur',
         status: 'completed'
       },
       {
         id: 3,
-        type: 'appointment',
-        title: 'Rendez-vous annulé',
-        description: 'Consultation urgente annulée',
-        time: 'Il y a 6 heures',
-        user: 'Mme. Dupont',
-        status: 'cancelled'
+        type: 'payment',
+        title: 'Paiement reçu',
+        description: 'Facture #INV-2024-015 payée',
+        time: 'Il y a 4 heures',
+        user: 'Mme. Dubois',
+        status: 'completed'
       },
       {
         id: 4,
-        type: 'payment',
-        title: 'Paiement reçu',
-        description: 'Facture #INV-2024-001 payée',
+        type: 'appointment',
+        title: 'Rendez-vous annulé',
+        description: 'Consultation urgente annulée',
         time: 'Il y a 1 jour',
-        user: 'Cabinet Sud',
-        status: 'completed'
+        user: 'M. Bernard',
+        status: 'cancelled'
       }
     ];
   }
 
   setupRealTimeUpdates() {
-    // Simulation de mises à jour en temps réel
     setInterval(() => {
       this.updateRandomStats();
     }, 30000);
@@ -312,133 +301,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
     }
   }
 
-  // Gestion du formulaire de cabinet
-  toggleCabinetForm() {
-    this.showCabinetForm = !this.showCabinetForm;
-    if (!this.showCabinetForm) {
-      this.resetCabinetForm();
-    }
-  }
-
-  onLogoUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.newCabinet.logo = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  removeLogo() {
-    this.newCabinet.logo = '';
-  }
-
-  validateCabinetForm(): boolean {
-    this.errorMessage = '';
-    
-    if (!this.newCabinet.nomCabinet.trim()) {
-      this.errorMessage = 'Le nom du cabinet est requis';
-      return false;
-    }
-
-    if (!this.newCabinet.adresseCabinet.trim()) {
-      this.errorMessage = 'L\'adresse du cabinet est requise';
-      return false;
-    }
-
-    if (!this.newCabinet.emailCabinet.trim()) {
-      this.errorMessage = 'L\'email du cabinet est requis';
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.newCabinet.emailCabinet)) {
-      this.errorMessage = 'Veuillez entrer un email valide';
-      return false;
-    }
-
-    if (!this.newCabinet.teleCabinet.trim()) {
-      this.errorMessage = 'Le téléphone du cabinet est requis';
-      return false;
-    }
-
-    return true;
-  }
-
-  async createCabinet() {
-    if (!this.validateCabinetForm()) {
-      return;
-    }
-
-    this.isSubmitting = true;
-
-    try {
-      // Simuler un appel API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Créer le cabinet
-      const newCabinetSummary: CabinetSummary = {
-        id: this.recentCabinets.length + 1,
-        name: this.newCabinet.nomCabinet,
-        medecins: 0,
-        secretaires: 0,
-        patients: 0,
-        status: 'active',
-        revenue: 0
-      };
-
-      // Ajouter aux cabinets récents
-      this.recentCabinets.unshift(newCabinetSummary);
-      
-      // Ajouter une activité
-      const newActivity: RecentActivity = {
-        id: this.recentActivities.length + 1,
-        type: 'cabinet',
-        title: 'Nouveau cabinet créé',
-        description: `${this.newCabinet.nomCabinet} a été créé avec succès`,
-        time: 'À l\'instant',
-        user: this.adminName,
-        status: 'completed'
-      };
-      this.recentActivities.unshift(newActivity);
-      
-      // Mettre à jour les statistiques
-      this.stats[0].value += 1; // Incrémenter le nombre de cabinets
-      this.stats[0].trend = 5; // Mettre à jour la tendance
-      
-      // Réinitialiser le formulaire
-      this.resetCabinetForm();
-      this.showCabinetForm = false;
-      
-      // Afficher un message de succès
-      console.log('Cabinet créé avec succès:', this.newCabinet);
-      
-    } catch (error) {
-      this.errorMessage = 'Erreur lors de la création du cabinet';
-      console.error('Erreur:', error);
-    } finally {
-      this.isSubmitting = false;
-    }
-  }
-
-  resetCabinetForm() {
-    this.newCabinet = {
-      nomCabinet: '',
-      adresseCabinet: '',
-      emailCabinet: '',
-      teleCabinet: '',
-      logo: ''
-    };
-    this.errorMessage = '';
-  }
-
   // Navigation
-  goToCabinets() {
-    this.router.navigate(['/admin/cabinets']);
-  }
-
   goToMedecins() {
     this.router.navigate(['/admin/medecins']);
   }
@@ -447,20 +310,142 @@ export class AdminDashboard implements OnInit, OnDestroy {
     this.router.navigate(['/admin/secretaires']);
   }
 
+  goToPatients() {
+    this.router.navigate(['/admin/patients']);
+  }
+
+  goToAppointments() {
+    this.router.navigate(['/admin/rendez-vous']);
+  }
+
   goToReports() {
     this.router.navigate(['/admin/reports']);
   }
 
-  // Méthode manquante pour aller au détail d'un cabinet
-  goToCabinetDetail(cabinetId: number) {
-    this.router.navigate(['/admin/cabinets', cabinetId]);
-  }
-
-  // Actions rapides
-  createNewCabinet() {
+  // Édition du cabinet
+  editCabinet() {
     this.showCabinetForm = true;
   }
 
+  async updateCabinet() {
+    if (!this.validateCabinetForm()) {
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      if (!this.cabinet) {
+        throw new Error('Aucun cabinet à mettre à jour');
+      }
+
+      // Créer un FormData pour l'envoi
+      const formData = new FormData();
+      formData.append('nomCabinet', this.editCabinetData.nomCabinet);
+      formData.append('adresseCabinet', this.editCabinetData.adresseCabinet);
+      formData.append('emailCabinet', this.editCabinetData.emailCabinet);
+      formData.append('teleCabinet', this.editCabinetData.teleCabinet);
+      
+      if (this.editCabinetData.logo && typeof this.editCabinetData.logo === 'string') {
+        // Si c'est une URL string, on ne l'envoie pas dans FormData
+        // ou on pourrait la convertir en fichier si nécessaire
+      }
+
+      // Simuler mise à jour API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mettre à jour le cabinet local
+      if (this.cabinet) {
+        this.cabinet = {
+          ...this.cabinet,
+          nomCabinet: this.editCabinetData.nomCabinet,
+          adresseCabinet: this.editCabinetData.adresseCabinet,
+          emailCabinet: this.editCabinetData.emailCabinet,
+          teleCabinet: this.editCabinetData.teleCabinet,
+          logo: this.editCabinetData.logo || this.cabinet.logo
+        };
+      }
+      
+      // Ajouter une activité
+      const newActivity: RecentActivity = {
+        id: this.recentActivities.length + 1,
+        type: 'cabinet',
+        title: 'Cabinet mis à jour',
+        description: 'Les informations du cabinet ont été modifiées',
+        time: 'À l\'instant',
+        user: this.adminName,
+        status: 'completed'
+      };
+      this.recentActivities.unshift(newActivity);
+      
+      this.showCabinetForm = false;
+      
+    } catch (error) {
+      this.errorMessage = 'Erreur lors de la mise à jour du cabinet';
+      console.error('Erreur:', error);
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
+  validateCabinetForm(): boolean {
+    this.errorMessage = '';
+    
+    if (!this.editCabinetData.nomCabinet.trim()) {
+      this.errorMessage = 'Le nom du cabinet est requis';
+      return false;
+    }
+
+    if (!this.editCabinetData.adresseCabinet.trim()) {
+      this.errorMessage = 'L\'adresse du cabinet est requise';
+      return false;
+    }
+
+    if (!this.editCabinetData.emailCabinet.trim()) {
+      this.errorMessage = 'L\'email du cabinet est requis';
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.editCabinetData.emailCabinet)) {
+      this.errorMessage = 'Veuillez entrer un email valide';
+      return false;
+    }
+
+    if (!this.editCabinetData.teleCabinet.trim()) {
+      this.errorMessage = 'Le téléphone du cabinet est requis';
+      return false;
+    }
+
+    return true;
+  }
+
+  toggleCabinetForm() {
+    this.showCabinetForm = !this.showCabinetForm;
+    if (!this.showCabinetForm) {
+      this.errorMessage = '';
+    }
+  }
+
+  onLogoUpload(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editCabinetData.logo = e.target.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeLogo() {
+    this.editCabinetData.logo = '';
+    if (this.cabinet) {
+      this.cabinet.logo = undefined;
+    }
+  }
+
+  // Actions rapides
   generateReport() {
     this.router.navigate(['/admin/reports/generate']);
   }
@@ -477,20 +462,11 @@ export class AdminDashboard implements OnInit, OnDestroy {
     }).format(amount);
   }
 
-  getStatusClass(status: string): string {
-    switch(status) {
-      case 'active': return 'status-active';
-      case 'inactive': return 'status-inactive';
-      case 'pending': return 'status-pending';
-      default: return '';
-    }
-  }
-
   getActivityIcon(type: string): string {
     switch(type) {
       case 'user': return 'fas fa-user-plus';
       case 'cabinet': return 'fas fa-clinic-medical';
-      case 'appointment': return 'fas fa-calendar-times';
+      case 'appointment': return 'fas fa-calendar-check';
       case 'payment': return 'fas fa-euro-sign';
       default: return 'fas fa-bell';
     }
@@ -500,7 +476,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
     switch(type) {
       case 'user': return '#10B981';
       case 'cabinet': return '#0ea5e9';
-      case 'appointment': return '#EF4444';
+      case 'appointment': return '#EC4899';
       case 'payment': return '#F59E0B';
       default: return '#6B7280';
     }

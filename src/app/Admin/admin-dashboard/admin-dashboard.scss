@@ -421,6 +421,41 @@
     }
   }
 }
+.cabinet-info {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border-left: 4px solid #a78bfa;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e2e8f0;
+
+    i {
+      color: #a78bfa;
+    }
+  }
+
+  .cabinet-details {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    i {
+      color: #a78bfa;
+      margin-right: 0.25rem;
+    }
+  }
+}
 
 // Actions Rapides
 .quick-actions-grid {
