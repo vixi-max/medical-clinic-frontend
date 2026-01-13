@@ -134,7 +134,14 @@ export const routes: Routes = [
       import('./Admin/admin-secritaires/admin-secritaires')
         .then(m => m.AdminSecritaires)
   },
-
+   {
+    path: 'AdminSup/cabinet',
+    loadComponent: () =>
+      import('./AdminSup/admin-sup-cabinet/admin-sup-cabinet')
+        .then(m => m.AdminSupCabinet)
+  },
+  
+ 
   // ================= WILDCARD =================
   {
     path: '**',

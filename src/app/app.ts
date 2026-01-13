@@ -29,8 +29,9 @@ export class AppComponent {
   isDoctorRoute(): boolean {
     return this.router.url.includes('/medecin');
   }
-  isAdminRoute(): boolean{
-    return this.router.url.includes('/Admin');
+ 
+    isAdminRoute(): boolean {
+    return this.router.url.includes('/Admin/') && !this.router.url.includes('/AdminSup/');
   }
    isAdminSupRoute(): boolean{
     return this.router.url.includes('/AdminSup');
